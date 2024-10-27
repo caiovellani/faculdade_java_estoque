@@ -137,7 +137,7 @@ public class EstoqueApp {
         Object[] message = {
                 "Nome: ", txtName,
                 "Preço: ", txtPrice,
-                "Quantidade: ", txtAmount  // Corrigido para usar o campo correto
+                "Quantidade: ", txtAmount
         };
 
         int option = JOptionPane.showConfirmDialog(null, message, "Alterar Produto", JOptionPane.OK_CANCEL_OPTION);
