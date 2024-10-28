@@ -2,8 +2,10 @@ package com.example.estoquepicole;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class EstoqueApp {
     private Estoque estoque;
@@ -16,6 +18,8 @@ public class EstoqueApp {
     public EstoqueApp() {
         estoque = new Estoque();
         listModel = new DefaultListModel<>();
+
+        loadProductsFromDatabase();
 
         JFrame frame = new JFrame("Controle de Estoque");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -50,30 +54,15 @@ public class EstoqueApp {
 
         // Botão para ADICIONAR um Produto
         JButton btnAdd = new JButton("Adicionar");
-        btnAdd.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addProduct();
-            }
-        });
+        btnAdd.addActionListener(e -> addProduct());
 
         // Botão para REMOVER um Produto
         JButton btnRemove = new JButton("Remover");
-        btnRemove.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                removeProduct();
-            }
-        });
+        btnRemove.addActionListener(e -> removeProduct());
 
         // Botão para EDITAR um Produto
         JButton btnEdit = new JButton("Editar");
-        btnEdit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                editProduct();
-            }
-        });
+        btnEdit.addActionListener(e -> editProduct());
 
         JPanel btnPanel = new JPanel();
         btnPanel.add(btnAdd);
@@ -86,14 +75,46 @@ public class EstoqueApp {
         frame.setVisible(true);
     }
 
-    // Função para ADICIONAR um produto;
+    private void loadProductsFromDatabase() {
+        try (Connection connection = Database.getConnection();
+             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM produtos");
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                String name = rs.getString("name");
+                double price = rs.getDouble("price");
+                int amount = rs.getInt("amount");
+                Produto produto = new Produto(name, price, amount);
+                listModel.addElement(produto);
+                estoque.addProducts(produto); // Presumindo que você tenha um método para adicionar produtos no estoque
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Erro ao carregar produtos: " + e.getMessage());
+        }
+    }
+
     private void addProduct() {
         String name = txtName.getText();
-        double price = Double.parseDouble(txtPrice.getText());
+        double price = Double.parseDouble(txtPrice.getText().replace(",", "."));
         int amount = Integer.parseInt(txtAmount.getText());
         Produto produto = new Produto(name, price, amount);
         estoque.addProducts(produto);
         listModel.addElement(produto);
+        clearFields();
+
+
+
+        try (Connection connection = Database.getConnection();
+             PreparedStatement stmt = connection.prepareStatement("INSERT INTO produtos (name, price, amount) VALUES (?, ?, ?)")) {
+            stmt.setString(1, name);
+            stmt.setDouble(2, price);
+            stmt.setInt(3, amount);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Erro ao adicionar produto: " + e.getMessage());
+        }
+
         clearFields();
     }
 
@@ -101,16 +122,23 @@ public class EstoqueApp {
     private void removeProduct(){
         int indexSelected = showProducts.getSelectedIndex();
         if (indexSelected != -1) {
-            int response = JOptionPane.showConfirmDialog(
-                    null,
-                    "Tem certeza que deseja excluir este produto?",
-                    "Confirmação de Exclusão",
-                    JOptionPane.YES_NO_OPTION
-            );
-
+            Produto produto = listModel.getElementAt(indexSelected);
+            int response = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir este produto?", "Confirmação de Exclusão", JOptionPane.YES_NO_OPTION);
             if (response == JOptionPane.YES_OPTION) {
-                estoque.removeProducts(listModel.getElementAt(indexSelected));
+                System.out.println("Removendo produto: " + produto.getName());
+                estoque.removeProducts(produto);
                 listModel.remove(indexSelected);
+
+                try (Connection connection = Database.getConnection();
+                     PreparedStatement stmt = connection.prepareStatement("DELETE FROM produtos WHERE name = ? AND price = ? AND amount = ?")) {
+                    stmt.setString(1, produto.getName());
+                    stmt.setDouble(2, produto.getPrice());
+                    stmt.setInt(3, produto.getAmount());
+                    stmt.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Erro ao remover produto: " + e.getMessage());
+                }
             }
         } else {
             JOptionPane.showMessageDialog(null, "Selecione um produto para remover.");
@@ -148,6 +176,20 @@ public class EstoqueApp {
             Produto newProduct = new Produto(name, price, amount);
             estoque.editProducts(index, newProduct);
             listModel.set(index, newProduct);
+
+            try (Connection connection = Database.getConnection();
+                 PreparedStatement stmt = connection.prepareStatement("UPDATE produtos SET name = ?, price = ?, amount = ? WHERE name = ? AND price = ? AND amount = ?")) {
+                stmt.setString(1, name);
+                stmt.setDouble(2, price);
+                stmt.setInt(3, amount);
+                stmt.setString(4, produto.getName());
+                stmt.setDouble(5, produto.getPrice());
+                stmt.setInt(6, produto.getAmount());
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Erro ao editar produto: " + e.getMessage());
+            }
         }
     }
 
@@ -160,6 +202,6 @@ public class EstoqueApp {
 
     // Iniciar o projeto
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(EstoqueApp::new);
+        SwingUtilities.invokeLater(() -> new EstoqueApp());
     }
 }
