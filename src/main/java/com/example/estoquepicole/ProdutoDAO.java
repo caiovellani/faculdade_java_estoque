@@ -22,7 +22,7 @@ public class ProdutoDAO {
     }
 
     public void remover(Produto produto) throws SQLException {
-        String sql = "DELETE FROM produtos WHERE id = ? AND price = ? AND amount = ?";
+        String sql = "DELETE FROM produtos WHERE name = ? AND price = ? AND amount = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, produto.getName());
             stmt.setDouble(2, produto.getPrice());
@@ -32,14 +32,14 @@ public class ProdutoDAO {
     }
 
     public void atualizar(Produto produtoAntigo, Produto produtoNovo) throws SQLException {
-        String sql = "UPDATE produtos SET name = ?, price = ?, amount = ? WHERE name = ? AND price = ? AND amount = ?";
+        String sql = "UPDATE produtos SET name = ?, price = ?, amount = ? WHERE name = ? AND price = ? AND amount = ? ";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, produtoNovo.getName());
             stmt.setDouble(2, produtoNovo.getPrice());
             stmt.setInt(3, produtoNovo.getAmount());
-            stmt.setString(4, produtoAntigo.getName());
-            stmt.setDouble(5, produtoAntigo.getPrice());
-            stmt.setInt(6, produtoAntigo.getAmount());
+            stmt.setString(6, produtoAntigo.getName());
+            stmt.setDouble(7, produtoAntigo.getPrice());
+            stmt.setInt(8, produtoAntigo.getAmount());
             stmt.executeUpdate();
         }
     }
@@ -53,7 +53,10 @@ public class ProdutoDAO {
                 String name = rs.getString("name");
                 double price = rs.getDouble("price");
                 int amount = rs.getInt("amount");
-                produtos.add(new Produto(name, price, amount));
+                String brand = rs.getString("brand");
+                String tipo = rs.getString("tipo");
+                String cnpj = rs.getString("cnpj");
+                produtos.add(new Produto(name, price, amount, brand, tipo, cnpj));
             }
         }
         return produtos;
