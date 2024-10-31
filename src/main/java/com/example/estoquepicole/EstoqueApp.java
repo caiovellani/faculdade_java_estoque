@@ -119,7 +119,7 @@ public class EstoqueApp {
                 price = Double.parseDouble(txtPrice.getText().replace(",", "."));
                 amount = Integer.parseInt(txtAmount.getText()); // Quantidade é OBRIGATÓRIO SER INTEIRO;
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Preço e Quantidade devem ser números válidos.", "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Quantidade deve ser um número inteiro.", "Erro", JOptionPane.ERROR_MESSAGE);
                 continue;
             }
 
@@ -225,7 +225,7 @@ public class EstoqueApp {
                 price = Double.parseDouble(txtPrice.getText().replace(",", "."));
                 amount = Integer.parseInt(txtAmount.getText()); // Quantidade é OBRIGATÓRIO SER INTEIRO;
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Preço e Quantidade devem ser números válidos.", "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Quantidade deve ser um número inteiro.", "Erro", JOptionPane.ERROR_MESSAGE);
                 continue;
             }
 

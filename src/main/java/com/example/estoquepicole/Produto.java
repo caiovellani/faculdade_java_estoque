@@ -68,7 +68,7 @@ public class Produto {
 
     @Override
     public String toString() {
-        return String.format("Nome: %s - Marca: %s - Tipo: %s - Preço: R$ %.2f - Quantidade: %d, CNPJ: %s",
+        return String.format("Nome: %s - Marca: %s - Tipo: %s - Preço: R$ %.2f - Quantidade: %d CNPJ: %s",
                 name, brand, tipo, price, amount, cnpj);
     }
 }
