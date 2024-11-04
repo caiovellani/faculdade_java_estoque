@@ -56,7 +56,7 @@ public class EstoqueApp {
              PreparedStatement stmt = connection.prepareStatement("SELECT * FROM produtos");
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
-                String name = rs.getString("name");
+                String name = rs.getString("nome");
                 double price = rs.getDouble("price");
                 int amount = rs.getInt("amount");
                 String brand = rs.getString("brand");
@@ -130,7 +130,7 @@ public class EstoqueApp {
             listModel.addElement(produto);
 
             try (Connection connection = Database.getConnection();
-                 PreparedStatement stmt = connection.prepareStatement("INSERT INTO produtos (name, price, amount,) VALUES (?, ?, ?)")) {
+                 PreparedStatement stmt = connection.prepareStatement("INSERT INTO produtos (nome, price, amount) VALUES (?, ?, ?)")) { // Removido a vírgula após 'amount'
                 stmt.setString(1, name);
                 stmt.setDouble(2, price);
                 stmt.setInt(3, amount);
@@ -153,7 +153,7 @@ public class EstoqueApp {
                 listModel.remove(indexSelected);
 
                 try (Connection connection = Database.getConnection();
-                     PreparedStatement stmt = connection.prepareStatement("DELETE FROM produtos WHERE name = ? AND price = ? AND amount = ?")) {
+                     PreparedStatement stmt = connection.prepareStatement("DELETE FROM produtos WHERE nome = ? AND price = ? AND amount = ?")) {
                     stmt.setString(1, produto.getName());
                     stmt.setDouble(2, produto.getPrice());
                     stmt.setInt(3, produto.getAmount());
@@ -235,13 +235,13 @@ public class EstoqueApp {
             listModel.set(index, newProduct);
 
             try (Connection connection = Database.getConnection();
-                 PreparedStatement stmt = connection.prepareStatement("UPDATE produtos SET name = ?, price = ?, amount = ?, WHERE name = ? AND price = ? AND amount = ?")) {
+                 PreparedStatement stmt = connection.prepareStatement("UPDATE produtos SET nome = ?, price = ?, amount = ? WHERE nome = ? AND price = ? AND amount = ?")) { // Removido a vírgula extra
                 stmt.setString(1, name);
                 stmt.setDouble(2, price);
                 stmt.setInt(3, amount);
-                stmt.setString(7, produto.getName());
-                stmt.setDouble(8, produto.getPrice());
-                stmt.setInt(9, produto.getAmount());
+                stmt.setString(4, produto.getName());
+                stmt.setDouble(5, produto.getPrice());
+                stmt.setInt(6, produto.getAmount());
                 stmt.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
