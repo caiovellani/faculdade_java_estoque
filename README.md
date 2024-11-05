@@ -30,10 +30,13 @@ O layout possui interface simples e prática, assim o usuário terá facilidade 
 ![Alterar Produto](https://cdn.discordapp.com/attachments/1152786033855954987/1303411182312362025/image.png?ex=672ba7c2&is=672a5642&hm=47afa1dc91a01c01577c72581962b021197c8fdadb4b222f150af39c617ae3b4&)
 
 ## Tecnologias
-- **Maven**
-- **Java**
-- **JavaSwing**
-- **Mysql**
+- **Java**: Linguagem de programação principal usada para desenvolver a aplicação.
+- **JDBC (Java Database Connectivity)**: Biblioteca para conectar a aplicação Java ao banco de dados MySQL.
+- **MySQL**: Sistema de gerenciamento de banco de dados utilizado para armazenar os dados do estoque.
+- **Swing**: Biblioteca Java para criar interfaces gráficas de usuário (GUI) na aplicação.
+- **Eclipse/IntelliJ IDEA**: Ambiente de desenvolvimento integrado (IDE) utilizado para codificação e desenvolvimento do projeto.
+- **Maven**: Ferramentas de gerenciamento de dependências e construção do projeto.
+- **Git**: Sistema de controle de versão utilizado para gerenciar o código-fonte do projeto.
 
 ## Passo a Passo
 
